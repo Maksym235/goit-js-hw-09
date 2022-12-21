@@ -26,28 +26,29 @@ const options = {
     function showTime() {
       const currentDate = Date.now();
       const timeMs = selectedDates[0] - currentDate;
-      console.log(`qwd`);
-      const { days, hours, minutes, seconds } = convertMs(timeMs);
-      console.log(
-        '🚀 ~ file: 02-timer.js:30 ~ showTime ~ convertMs(timeMs)',
-        convertMs(timeMs)
-      );
-
+      const difference = convertMs(timeMs);
+      const { days, hours, minutes, seconds } = difference;
       refs.timeDays.textContent = days;
       refs.timeHours.textContent = hours;
       refs.timeMinutes.textContent = minutes;
       refs.timeSeconds.textContent = seconds;
+
+      if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+        clearInterval(timerId);
+      }
     }
+    function onClickStartButton() {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+      timerId = setInterval(showTime, 1000);
+    }
+
+    refs.start.addEventListener('click', onClickStartButton);
   },
 };
 
 flatpickr('#datetime-picker', options);
-
-refs.start.addEventListener('click', onClickStartButton);
-
-function onClickStartButton() {
-  timerId = setInterval(() => {});
-}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -67,5 +68,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-function setTimer() {}

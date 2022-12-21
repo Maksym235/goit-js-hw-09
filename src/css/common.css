@@ -16,3 +16,39 @@ img {
   display: block;
   max-width: 100%;
 }
+
+input {
+  padding: 0;
+  height: 30px;
+  border-width: 3px;
+  border-color: #6495ed;
+}
+
+button {
+  font-family: 'Amatic SC', cursive;
+  font-weight: 700;
+  font-size: 20px;
+  width: 120px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  box-shadow: 10px 5px 5px #3a83b1db;
+  color: black;
+  background-color: #6495ed;
+}
+
+.timer {
+  font-family: 'Amatic SC', cursive;
+  font-weight: 700;
+  font-size: 30px;
+  display: flex;
+  margin-top: 20px;
+}
+
+.field {
+  margin-right: 20px;
+}
+
+.field:last-child {
+  margin-right: 0px;
+}
