@@ -1,45 +1,55 @@
+import Notiflix from 'notiflix';
+
 const refs = {
+  firstDelayIpt: document.querySelector('input[name="delay"]'),
+  stepsDelayIpt: document.querySelector('input[name="step"]'),
+  amountIpt: document.querySelector('input[name="amount"]'),
   form: document.querySelector('.form'),
 };
+// const firstInput = document.querySelector('input[name="delay"]');
+// const secondInput = document.querySelector('input[name="step"]');
+// const thirdInput = document.querySelector('input[name="amount"]');
+// const btnSubmit = document.querySelector('button');
+// const form = document.querySelector('.form');
 
 refs.form.addEventListener('submit', onSubmit);
-let firstDelay = null;
-let delayStep = null;
-let delayAmount = null;
-
-function createPromise(position, delay) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const shouldResolve = Math.random() > 0.3;
-      if (shouldResolve) {
-        resolve({ position, delay });
-      }
-      reject({ position, delay });
-    }, delay);
-  });
-}
 
 function onSubmit(evt) {
   evt.preventDefault();
-  const {
-    elements: { delay, step, amount },
-  } = evt.currentTarget;
 
-  firstDelay = Number(delay.value);
-  delayStep = Number(step.value);
-  delayAmount = Number(amount.value);
-
-  for (let i = 1; i <= delayAmount; i++) {
-    createPromise(i, delayAmount)
+  let delay = Number(refs.firstDelayIpt.value);
+  let step = Number(refs.stepsDelayIpt.value);
+  let amount = Number(refs.amountIpt.value);
+  for (let i = 1; i <= amount; i++) {
+    if (i > 1) {
+      delay += step;
+    }
+    createPromise(i, delay)
       .then(({ position, delay }) => {
-        alert(`✅  Fulfilled promise ${position} in ${delay}ms`);
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`
+        );
       })
       .catch(({ position, delay }) => {
-        alert(`❌  Rejected promise ${position} in ${delay}ms`);
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`
+        );
       });
-
-    delayAmount += delayStep;
-
-    evt.currentTarget.reset();
   }
+}
+
+function createPromise(position, delay) {
+  const promise = new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
+  });
+
+  return promise;
 }

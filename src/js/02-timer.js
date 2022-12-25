@@ -2,53 +2,57 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const refs = {
+  input: document.querySelector('#datetime-picker'),
   start: document.querySelector('[data-start]'),
   timeDays: document.querySelector('[data-days]'),
   timeHours: document.querySelector('[data-hours]'),
   timeMinutes: document.querySelector('[data-minutes]'),
   timeSeconds: document.querySelector('[data-seconds]'),
 };
+
 refs.start.setAttribute('disabled', '');
 let timerId = null;
-
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    if (selectedDates[0] < new Date()) {
+    if (selectedDates[0] < Date.now()) {
       alert(`Please choose a date in the future`);
       return;
     }
     refs.start.removeAttribute('disabled');
-
-    function showTime() {
-      const currentDate = Date.now();
-      const timeMs = selectedDates[0] - currentDate;
-      const difference = convertMs(timeMs);
-      const { days, hours, minutes, seconds } = difference;
-      refs.timeDays.textContent = days;
-      refs.timeHours.textContent = hours;
-      refs.timeMinutes.textContent = minutes;
-      refs.timeSeconds.textContent = seconds;
-
-      if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
-        clearInterval(timerId);
-      }
-    }
-    function onClickStartButton() {
-      if (timerId) {
-        clearInterval(timerId);
-      }
-      timerId = setInterval(showTime, 1000);
-    }
-
     refs.start.addEventListener('click', onClickStartButton);
   },
 };
 
-flatpickr('#datetime-picker', options);
+function onClickStartButton() {
+  if (timerId) {
+    clearInterval(timerId);
+  }
+  timerId = setInterval(showTime, 1000);
+}
+
+function showTime() {
+  const currentDate = Date.now();
+  const timeMs = new Date(refs.input.value) - currentDate;
+  const difference = convertMs(timeMs);
+  setMarkup(difference);
+  if (timeMs < 1000) {
+    clearInterval(timerId);
+  }
+}
+
+function setMarkup(differenceMS) {
+  const { days, hours, minutes, seconds } = differenceMS;
+  refs.timeDays.textContent = days;
+  refs.timeHours.textContent = hours;
+  refs.timeMinutes.textContent = minutes;
+  refs.timeSeconds.textContent = seconds;
+}
+
+flatpickr(refs.input, options);
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
